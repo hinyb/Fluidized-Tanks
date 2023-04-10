@@ -138,6 +138,7 @@ public class TankBlockEntity extends BlockEntity {
         if (this.tankDefinition == null && tag.contains("TankDefinition", Tag.TAG_COMPOUND)) {
             CompoundTag tankDefinitionTag = tag.getCompound("TankDefinition");
             this.tankDefinition = TankDefinition.get(tankDefinitionTag);
+            this.tank.setCapacity(this.tankDefinition.capacity());
             if (tag.contains("StoredFluid", Tag.TAG_COMPOUND)) {
                 this.tank.readFromNBT(tag.getCompound("StoredFluid"));
             }
