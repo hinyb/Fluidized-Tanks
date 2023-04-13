@@ -20,6 +20,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import zone.rong.fluidizedtanks.block.TankBlock;
 import zone.rong.fluidizedtanks.block.TankBlockEntity;
+import zone.rong.fluidizedtanks.block.item.TankBlockItem;
 import zone.rong.fluidizedtanks.client.TankBlockEntityRenderer;
 import zone.rong.fluidizedtanks.data.S2CUpdateTankDefinitionsPacket;
 import zone.rong.fluidizedtanks.data.TankDefinitionManager;
@@ -65,7 +66,7 @@ public class FluidizedTanks {
     }
 
     private void registerItem(final RegistryEvent.Register<Item> event) {
-        BlockItem tankItem = new BlockItem(TANK, new Item.Properties().tab(CreativeModeTab.TAB_REDSTONE).stacksTo(1));
+        TankBlockItem tankItem = new TankBlockItem(TANK);
         tankItem.setRegistryName(TANK.getRegistryName());
         event.getRegistry().register(tankItem);
     }

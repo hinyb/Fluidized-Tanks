@@ -1,5 +1,6 @@
 package zone.rong.fluidizedtanks.data;
 
+import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -33,6 +34,10 @@ public record TankDefinition(ResourceLocation id, int capacity, int colour) {
 
     public static void load(TankBlockEntity tank, ItemStack stack) {
         tank.getTankDefinition().ifPresent(definition -> definition.load(stack));
+    }
+
+    public String getDescriptionId() {
+        return Util.makeDescriptionId("item.fluidizedtanks_tank", this.id);
     }
 
     public void load(ItemStack stack) {
