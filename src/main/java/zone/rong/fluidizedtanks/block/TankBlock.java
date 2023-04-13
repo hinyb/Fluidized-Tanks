@@ -78,20 +78,17 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
     @Override
     public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
         ItemStack stack = super.getCloneItemStack(level, pos, state);
-        level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> TankDefinition.load(tank, stack));
+        level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> tank.saveToStack(stack));
         return stack;
     }
 
     @Override
     public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide && !player.isCreative()) {
-            level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> tank.getTankDefinition().ifPresent(definition -> {
-                ItemStack stack = new ItemStack(this);
-                tank.saveToStack(stack);
-                ItemEntity itementity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
-                itementity.setDefaultPickUpDelay();
-                level.addFreshEntity(itementity);
-            }));
+            ItemStack stack = getCloneItemStack(level, pos, state);
+            ItemEntity itementity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
+            itementity.setDefaultPickUpDelay();
+            level.addFreshEntity(itementity);
         }
         super.playerWillDestroy(level, pos, state, player);
     }
