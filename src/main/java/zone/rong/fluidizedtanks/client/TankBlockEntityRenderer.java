@@ -43,7 +43,7 @@ public class TankBlockEntityRenderer implements BlockEntityRenderer<TankBlockEnt
             float fillY = Mth.lerp(Mth.clamp(entity.getFill(), 0, 1), TANK_W, 1 - TANK_W);
             float topHeight = fillY;
             float bottomHeight = TANK_W;
-            if (attributes.isGaseous(fluid)) {
+            if (attributes.isLighterThanAir()) {
                 topHeight = 1 - TANK_W;
                 bottomHeight = 1 - fillY;
             }

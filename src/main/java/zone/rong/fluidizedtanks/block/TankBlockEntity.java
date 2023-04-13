@@ -1,8 +1,10 @@
 package zone.rong.fluidizedtanks.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -11,12 +13,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import zone.rong.fluidizedtanks.FluidizedTanks;
 import zone.rong.fluidizedtanks.data.TankDefinition;
@@ -54,7 +59,7 @@ public class TankBlockEntity extends BlockEntity {
         @Override
         protected void onContentsChanged() {
             super.onContentsChanged();
-            TankBlockEntity.this.syncToClient();
+            TankBlockEntity.this.setChanged();
         }
     };
     private LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> this.tank);
@@ -65,12 +70,18 @@ public class TankBlockEntity extends BlockEntity {
         super(FluidizedTanks.ENTITY_TYPE, pos, state);
     }
 
-    public void loadDefinition(ItemStack stack) {
+    public void loadFromStack(ItemStack stack) {
         this.tankDefinition = TankDefinition.get(stack);
+        CompoundTag tag = stack.getTag();
+        this.tank.setCapacity(this.tankDefinition.capacity());
+        if (tag != null && tag.contains("Tank", Tag.TAG_COMPOUND)) {
+            this.tank.readFromNBT(tag.getCompound("Tank"));
+        }
+        setChanged();
     }
 
     public Optional<TankDefinition> getTankDefinition() {
-        return Optional.of(tankDefinition);
+        return Optional.ofNullable(tankDefinition);
     }
 
     public FluidStack getFluid() {
@@ -102,26 +113,33 @@ public class TankBlockEntity extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
-        if (this.tank != null) {
-            this.tank.writeToNBT(tag);
-        }
+        tag.put("TankDefinition", this.tankDefinition.save());
+        this.tank.writeToNBT(tag);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        if (this.tank != null) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
+        CompoundTag tag = packet.getTag();
+        if (tag != null) {
+            this.tankDefinition = TankDefinition.get(tag.getCompound("TankDefinition"));
+            this.tank.setCapacity(this.tankDefinition.capacity());
             this.tank.readFromNBT(tag);
         }
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag) {
+        this.tankDefinition = TankDefinition.get(tag.getCompound("TankDefinition"));
+        this.tank.setCapacity(this.tankDefinition.capacity());
+        this.tank.readFromNBT(tag);
     }
 
     // Persistency
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        if (this.tankDefinition != null) {
-            tag.put("TankDefinition", this.tankDefinition.save());
-        }
+        tag.put("TankDefinition", this.tankDefinition.save());
         CompoundTag tankTag = new CompoundTag();
         this.tank.writeToNBT(tankTag);
         tag.put("Tank", tankTag);
@@ -131,12 +149,19 @@ public class TankBlockEntity extends BlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        if (tag.contains("TankDefinition", Tag.TAG_COMPOUND)) {
-            this.tankDefinition = TankDefinition.get(tag.getCompound("TankDefinition"));
+        this.tankDefinition = TankDefinition.get(tag.getCompound("TankDefinition"));
+        this.tank.setCapacity(this.tankDefinition.capacity());
+        this.tank.readFromNBT(tag.getCompound("Tank"));
+        setChanged();
+    }
+
+    @NotNull
+    @Override
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return this.holder.cast();
         }
-        if (tag.contains("Tank", Tag.TAG_COMPOUND)) {
-            this.tank.readFromNBT(tag.getCompound("Tank"));
-        }
+        return super.getCapability(cap, side);
     }
 
     // New Forge nonsense
@@ -151,6 +176,12 @@ public class TankBlockEntity extends BlockEntity {
     public void reviveCaps() {
         super.reviveCaps();
         holder = LazyOptional.of(() -> this.tank);
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        this.syncToClient();
     }
 
     // This will allow us to fire the custom ClientboundBlockEntityDataPacket packet with `getUpdateTag`

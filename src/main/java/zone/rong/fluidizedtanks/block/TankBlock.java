@@ -32,8 +32,6 @@ import zone.rong.fluidizedtanks.FluidizedTanks;
 import zone.rong.fluidizedtanks.data.TankDefinition;
 import zone.rong.fluidizedtanks.data.TankDefinitionManager;
 
-import java.util.Optional;
-
 public class TankBlock extends Block implements EntityBlock, BlockColor, ItemColor {
 
     public TankBlock() {
@@ -42,10 +40,8 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (super.use(state, level, pos, player, hand, hit) == InteractionResult.PASS) {
-            if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) {
-                return InteractionResult.sidedSuccess(level.isClientSide);
-            }
+        if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) {
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
         return InteractionResult.PASS;
     }
@@ -64,7 +60,7 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack) {
-        level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> tank.loadDefinition(stack));
+        level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> tank.loadFromStack(stack));
     }
 
     @Override
@@ -92,7 +88,7 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
             level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> tank.getTankDefinition().ifPresent(definition -> {
                 ItemStack stack = new ItemStack(this);
                 definition.load(stack);
-                stack.getTag().put("TankValue", tank.getUpdateTag());
+                stack.getTag().put("Tank", tank.getUpdateTag());
                 ItemEntity itementity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
                 itementity.setDefaultPickUpDelay();
                 level.addFreshEntity(itementity);
@@ -131,12 +127,9 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
     public int getColor(BlockState state, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos, int tintIndex) {
         if (tintIndex == 0) {
             if (level != null && pos != null) {
-                return level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).stream()
-                        .map(TankBlockEntity::getTankDefinition)
-                        .flatMap(Optional::stream)
-                        .map(TankDefinition::colour)
-                        .findFirst()
-                        .orElse(-1);
+                if (level.getBlockEntity(pos) instanceof TankBlockEntity tank) {
+                    return tank.getTankDefinition().map(TankDefinition::colour).orElse(-1);
+                }
             }
         }
         return -1;
