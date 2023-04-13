@@ -7,14 +7,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 import org.slf4j.Logger;
-import zone.rong.fluidizedtanks.TankDefinition;
+import zone.rong.fluidizedtanks.FluidizedTanks;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 public class TankDefinitionManager extends SimpleJsonResourceReloadListener {
@@ -30,12 +36,32 @@ public class TankDefinitionManager extends SimpleJsonResourceReloadListener {
         event.addListener(instance = new TankDefinitionManager());
     }
 
+    public static void listenOnDatapackSync(OnDatapackSyncEvent event) {
+        event.getPlayerList().getPlayers().forEach(TankDefinitionManager::sendToPlayer);
+    }
+
+    public static void listenOnPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        sendToPlayer((ServerPlayer) event.getPlayer());
+    }
+
+    private static void sendToPlayer(ServerPlayer player) {
+        SimpleChannel channel = FluidizedTanks.NETWORK_CHANNEL;
+        // This ensures we don't fire unnecessary packets such as in an SSP environment
+        if (channel.isRemotePresent(player.connection.getConnection()) && !player.connection.getConnection().isMemoryConnection()) {
+            channel.send(PacketDistributor.PLAYER.with(() -> player), new S2CUpdateTankDefinitionsPacket(instance.definitions));
+        }
+    }
+
     public TankDefinitionManager() {
         super(GSON, "fluidizedtanks");
     }
 
-    public Collection<TankDefinition> getDefinitions() {
-        return definitions.values();
+    public Map<ResourceLocation, TankDefinition> getDefinitions() {
+        return Collections.unmodifiableMap(definitions);
+    }
+
+    public void refresh(Map<ResourceLocation, TankDefinition> newDefinitions) {
+        this.definitions = ImmutableMap.copyOf(newDefinitions);
     }
 
     @Override

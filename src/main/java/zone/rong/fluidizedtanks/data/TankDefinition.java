@@ -1,4 +1,4 @@
-package zone.rong.fluidizedtanks;
+package zone.rong.fluidizedtanks.data;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -32,7 +32,7 @@ public record TankDefinition(ResourceLocation id, int capacity, int colour) {
     }
 
     public static void load(TankBlockEntity tank, ItemStack stack) {
-        tank.getDefinition().ifPresent(definition -> definition.load(stack));
+        tank.getTankDefinition().ifPresent(definition -> definition.load(stack));
     }
 
     public void load(ItemStack stack) {

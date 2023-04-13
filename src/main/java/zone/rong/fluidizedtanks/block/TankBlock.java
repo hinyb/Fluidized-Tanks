@@ -5,7 +5,6 @@ import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +29,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidUtil;
 import org.jetbrains.annotations.Nullable;
 import zone.rong.fluidizedtanks.FluidizedTanks;
-import zone.rong.fluidizedtanks.TankDefinition;
+import zone.rong.fluidizedtanks.data.TankDefinition;
 import zone.rong.fluidizedtanks.data.TankDefinitionManager;
 
 import java.util.Optional;
@@ -71,7 +70,8 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
     @Override
     public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
         if (TankDefinitionManager.instance != null) {
-            for (TankDefinition definition : TankDefinitionManager.instance.getDefinitions()) {
+            // TODO
+            for (TankDefinition definition : TankDefinitionManager.instance.getDefinitions().values()) {
                 ItemStack stack = new ItemStack(this);
                 definition.load(stack);
                 list.add(stack);
@@ -89,7 +89,7 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
     @Override
     public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide && !player.isCreative()) {
-            level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> tank.getDefinition().ifPresent(definition -> {
+            level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> tank.getTankDefinition().ifPresent(definition -> {
                 ItemStack stack = new ItemStack(this);
                 definition.load(stack);
                 stack.getTag().put("TankValue", tank.getUpdateTag());
@@ -132,7 +132,7 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
         if (tintIndex == 0) {
             if (level != null && pos != null) {
                 return level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).stream()
-                        .map(TankBlockEntity::getDefinition)
+                        .map(TankBlockEntity::getTankDefinition)
                         .flatMap(Optional::stream)
                         .map(TankDefinition::colour)
                         .findFirst()
