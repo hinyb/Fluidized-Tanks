@@ -80,6 +80,15 @@ public class TankBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    public void saveToStack(ItemStack stack) {
+        stack.addTagElement("TankDefinition", this.tankDefinition.save());
+        if (!this.tank.isEmpty()) {
+            CompoundTag tankTag = new CompoundTag();
+            this.tank.writeToNBT(tankTag);
+            stack.addTagElement("Tank", tankTag);
+        }
+    }
+
     public Optional<TankDefinition> getTankDefinition() {
         return Optional.ofNullable(tankDefinition);
     }

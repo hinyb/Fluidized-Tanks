@@ -87,8 +87,7 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
         if (!level.isClientSide && !player.isCreative()) {
             level.getBlockEntity(pos, FluidizedTanks.ENTITY_TYPE).ifPresent(tank -> tank.getTankDefinition().ifPresent(definition -> {
                 ItemStack stack = new ItemStack(this);
-                definition.load(stack);
-                stack.getTag().put("Tank", tank.getUpdateTag());
+                tank.saveToStack(stack);
                 ItemEntity itementity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
                 itementity.setDefaultPickUpDelay();
                 level.addFreshEntity(itementity);
