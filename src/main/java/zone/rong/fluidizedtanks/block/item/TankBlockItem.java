@@ -28,11 +28,11 @@ public class TankBlockItem extends BlockItem {
         // . . . . .
         if (tag.contains("TankDefinitionId", Tag.TAG_STRING)) {
             String id = tag.getString("TankDefinitionId");
-            if (StackWalker.getInstance().walk(stream -> stream.skip(3).findFirst()).filter(frame -> frame.getClassName().equals(CraftingHelper.class.getName())).isPresent()) {
+            // if (StackWalker.getInstance().walk(stream -> stream.skip(3).findFirst()).filter(frame -> frame.getClassName().equals(CraftingHelper.class.getName())).isPresent()) {
                 tag.remove("TankDefinitionId");
                 TankDefinition definition = TankDefinitionManager.instance.getDefinitions().get(new ResourceLocation(id));
                 tag.put("TankDefinition", definition.save());
-            }
+            // }
         }
     }
 
