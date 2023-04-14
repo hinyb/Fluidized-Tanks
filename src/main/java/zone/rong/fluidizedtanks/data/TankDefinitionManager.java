@@ -19,7 +19,6 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import org.slf4j.Logger;
 import zone.rong.fluidizedtanks.FluidizedTanks;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 

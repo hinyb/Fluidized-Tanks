@@ -4,8 +4,6 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -45,7 +43,7 @@ public class FluidizedTanks {
         bus.addListener(this::registerBlockColour);
         bus.addListener(this::registerItemColour);
 
-        MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenAddReload);
+        // MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenAddReload);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnDatapackSync);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnPlayerLoggedIn);
 

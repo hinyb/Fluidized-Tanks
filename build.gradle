@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7.+'
     }
 }
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -14,7 +15,7 @@ plugins {
     id 'maven-publish'
 }
 apply plugin: 'net.minecraftforge.gradle'
-
+apply plugin: 'org.spongepowered.mixin'
 
 version = '0.1'
 group = 'zone.rong.fluidizedtanks' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -61,10 +62,10 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'fluidizedtanks'
 
             mods {
-                examplemod {
+                fluidizedtanks {
                     source sourceSets.main
                 }
             }
@@ -78,10 +79,10 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'fluidizedtanks'
 
             mods {
-                examplemod {
+                fluidizedtanks {
                     source sourceSets.main
                 }
             }
@@ -106,10 +107,10 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'fluidizedtanks'
 
             mods {
-                examplemod {
+                fluidizedtanks {
                     source sourceSets.main
                 }
             }
@@ -123,10 +124,10 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'fluidizedtanks', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                examplemod {
+                fluidizedtanks {
                     source sourceSets.main
                 }
             }
@@ -149,7 +150,9 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.18.2-40.0.22'
 
-    implementation 'team.chisel.ctm:CTM:1.18.2-1.1.5+5'
+    compileOnly 'team.chisel.ctm:CTM:1.18.2-1.1.5+5'
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
@@ -161,6 +164,11 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+}
+
+mixin {
+    add sourceSets.main, 'mixins.fluidizedtanks.refmap.json'
+    config 'mixins.fluidizedtanks.json'
 }
 
 // Example for how to get properties into the manifest for reading at runtime.

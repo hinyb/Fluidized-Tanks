@@ -16,7 +16,7 @@
   "result": {
     "item": "fluidizedtanks:tank",
     "nbt": {
-      "Definition": "wooden"
+      "TankDefinitionId": "fluidizedtanks:wood"
     },
     "count": 1
   }
