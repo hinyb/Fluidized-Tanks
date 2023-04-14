@@ -32,6 +32,10 @@ import zone.rong.fluidizedtanks.FluidizedTanks;
 import zone.rong.fluidizedtanks.data.TankDefinition;
 import zone.rong.fluidizedtanks.data.TankDefinitionManager;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class TankBlock extends Block implements EntityBlock, BlockColor, ItemColor {
 
     public TankBlock() {
@@ -66,7 +70,9 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
     @Override
     public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
         if (TankDefinitionManager.instance != null) {
-            for (TankDefinition definition : TankDefinitionManager.instance.getDefinitions().values()) {
+            List<TankDefinition> definitions = new ArrayList<>(TankDefinitionManager.instance.getDefinitions().values());
+            definitions.sort(Comparator.comparingInt(TankDefinition::capacity));
+            for (TankDefinition definition : definitions) {
                 ItemStack stack = new ItemStack(this);
                 definition.load(stack);
                 list.add(stack);
