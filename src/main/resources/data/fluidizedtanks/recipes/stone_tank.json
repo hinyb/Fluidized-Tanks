@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "WGW",
+    "SGS",
     "G G",
-    "WGW"
+    "SGS"
   ],
   "key": {
-    "W": {
-      "tag": "minecraft:planks"
+    "S": {
+      "tag": "forge:stone"
     },
     "G": {
       "tag": "forge:glass"
@@ -16,7 +16,7 @@
   "result": {
     "item": "fluidizedtanks:tank",
     "nbt": {
-      "TankDefinitionId": "fluidizedtanks:wood"
+      "TankDefinitionId": "fluidizedtanks:stone"
     },
     "count": 1
   }

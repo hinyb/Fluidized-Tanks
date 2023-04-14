@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "WGW",
+    "gGg",
     "G G",
-    "WGW"
+    "gGg"
   ],
   "key": {
-    "W": {
-      "tag": "minecraft:planks"
+    "g": {
+      "tag": "forge:ingots/gold"
     },
     "G": {
       "tag": "forge:glass"
@@ -16,7 +16,7 @@
   "result": {
     "item": "fluidizedtanks:tank",
     "nbt": {
-      "TankDefinitionId": "fluidizedtanks:wood"
+      "TankDefinitionId": "fluidizedtanks:gold"
     },
     "count": 1
   }
