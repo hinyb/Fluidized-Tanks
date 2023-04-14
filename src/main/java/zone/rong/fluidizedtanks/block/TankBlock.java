@@ -35,7 +35,7 @@ import zone.rong.fluidizedtanks.data.TankDefinitionManager;
 public class TankBlock extends Block implements EntityBlock, BlockColor, ItemColor {
 
     public TankBlock() {
-        super(Properties.of(Material.BUILDABLE_GLASS).strength(1F).sound(SoundType.GLASS).noOcclusion());
+        super(Properties.of(Material.BUILDABLE_GLASS).strength(1F).sound(SoundType.STONE).noOcclusion());
     }
 
     @Override
@@ -66,7 +66,6 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
     @Override
     public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
         if (TankDefinitionManager.instance != null) {
-            // TODO
             for (TankDefinition definition : TankDefinitionManager.instance.getDefinitions().values()) {
                 ItemStack stack = new ItemStack(this);
                 definition.load(stack);
