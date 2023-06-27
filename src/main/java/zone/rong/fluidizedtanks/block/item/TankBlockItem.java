@@ -51,7 +51,7 @@ public class TankBlockItem extends BlockItem {
             FluidStack fluid = FluidStack.loadFluidStackFromNBT(tankTag);
             if (!fluid.isEmpty()) {
                 MutableComponent name = fluid.getDisplayName().copy();
-                name = name.withStyle(name.getStyle().withColor(fluid.getFluid().getAttributes().getColor(fluid))); // TODO: lava default?
+                name = name; // TODO: lava default?
                 texts.add(new TranslatableComponent("tooltip.fluidizedtanks.fluid_amount", name, fluid.getAmount()));
             }
         }
