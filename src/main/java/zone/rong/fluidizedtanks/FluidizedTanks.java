@@ -67,17 +67,4 @@ public class FluidizedTanks {
         event.getRegistry().register(tankItem);
     }
 
-    private void setupClient(final FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(TANK, RenderType.cutout());
-        BlockEntityRenderers.register(ENTITY_TYPE, ctx -> new TankBlockEntityRenderer());
-    }
-
-    private void registerBlockColour(final ColorHandlerEvent.Block event) {
-        event.getBlockColors().register(TANK, TANK);
-    }
-    
-    private void registerItemColour(final ColorHandlerEvent.Item event) {
-        event.getItemColors().register(TANK, TANK);
-    }
-
 }
