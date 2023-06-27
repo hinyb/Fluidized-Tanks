@@ -43,6 +43,9 @@ public class FluidizedTanks {
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnDatapackSync);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnPlayerLoggedIn);
 
+        final ClientSideOnlyModEventRegistrar clientSideOnlyModEventRegistrar = new ClientSideOnlyModEventRegistrar(bus,TANK,ENTITY_TYPE);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> clientSideOnlyModEventRegistrar::registerClientOnlyEvents);
+        
         int networkId = 0;
         S2CUpdateTankDefinitionsPacket.register(NETWORK_CHANNEL, networkId++);
     }
