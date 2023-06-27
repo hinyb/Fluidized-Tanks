@@ -1,9 +1,11 @@
-package zone/rong/fluidzedtanks;
+package zone.rong.fluidzedtanks;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import zone.rong.fluidizedtanks.block.TankBlock;
+import zone.rong.fluidizedtanks.block.TankBlockEntity;
 
 public class ClientSideOnlyModEventRegistrar {
     private final IEventBus eventBus;
