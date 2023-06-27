@@ -1,6 +1,5 @@
 package zone.rong.fluidizedtanks.block;
 
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -121,19 +120,7 @@ public class TankBlock extends Block implements EntityBlock, ItemColor {
     public boolean skipRendering(BlockState selfState, BlockState neighbourState, Direction direction) {
         return neighbourState.is(this) || super.skipRendering(selfState, neighbourState, direction);
     }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public int getColor(ItemStack stack, int tintIndex) {
-        if (tintIndex == 0) {
-            TankDefinition tankDefinition = TankDefinition.get(stack);
-            if (tankDefinition != null) {
-                return tankDefinition.colour();
-            }
-        }
-        return -1;
-    }
-
+    
     private static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> p_152133_, BlockEntityType<E> p_152134_, BlockEntityTicker<? super E> p_152135_) {
         return p_152134_ == p_152133_ ? (BlockEntityTicker<A>)p_152135_ : null;
     }
