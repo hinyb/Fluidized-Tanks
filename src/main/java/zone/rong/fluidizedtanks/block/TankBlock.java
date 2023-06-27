@@ -1,6 +1,5 @@
 package zone.rong.fluidizedtanks.block;
 
-import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class TankBlock extends Block implements EntityBlock, BlockColor, ItemColor {
+public class TankBlock extends Block implements EntityBlock, ItemColor {
 
     public TankBlock() {
         super(Properties.of(Material.BUILDABLE_GLASS).strength(1F).sound(SoundType.STONE).noOcclusion());
@@ -121,19 +120,6 @@ public class TankBlock extends Block implements EntityBlock, BlockColor, ItemCol
     @Override
     public boolean skipRendering(BlockState selfState, BlockState neighbourState, Direction direction) {
         return neighbourState.is(this) || super.skipRendering(selfState, neighbourState, direction);
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public int getColor(BlockState state, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos, int tintIndex) {
-        if (tintIndex == 0) {
-            if (level != null && pos != null) {
-                if (level.getBlockEntity(pos) instanceof TankBlockEntity tank) {
-                    return tank.getTankDefinition().map(TankDefinition::colour).orElse(-1);
-                }
-            }
-        }
-        return -1;
     }
 
     @Override
