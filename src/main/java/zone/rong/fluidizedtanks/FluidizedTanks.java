@@ -41,7 +41,7 @@ public class FluidizedTanks {
         bus.addGenericListener(BlockEntityType.class, this::registerBlockEntity);
         bus.addGenericListener(Item.class, this::registerItem);
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, registerClientOnlyEvents());
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> registerClientOnlyEvents);
 
         // MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenAddReload);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnDatapackSync);
