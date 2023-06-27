@@ -1,7 +1,5 @@
 package zone.rong.fluidizedtanks;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -41,6 +39,10 @@ public class FluidizedTanks {
         bus.addGenericListener(BlockEntityType.class, this::registerBlockEntity);
         bus.addGenericListener(Item.class, this::registerItem);
 
+        bus.addListener(this::setupClient);
+        bus.addListener(this::registerBlockColour);
+        bus.addListener(this::registerItemColour);
+
         // MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenAddReload);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnDatapackSync);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnPlayerLoggedIn);
@@ -65,6 +67,19 @@ public class FluidizedTanks {
         TankBlockItem tankItem = new TankBlockItem(TANK);
         tankItem.setRegistryName(TANK.getRegistryName());
         event.getRegistry().register(tankItem);
+    }
+
+    private void setupClient(final FMLClientSetupEvent event) {
+        ItemBlockRenderTypes.setRenderLayer(TANK, RenderType.cutout());
+        BlockEntityRenderers.register(ENTITY_TYPE, ctx -> new TankBlockEntityRenderer());
+    }
+
+    private void registerBlockColour(final ColorHandlerEvent.Block event) {
+        event.getBlockColors().register(TANK, TANK);
+    }
+
+    private void registerItemColour(final ColorHandlerEvent.Item event) {
+        event.getItemColors().register(TANK, TANK);
     }
 
 }
