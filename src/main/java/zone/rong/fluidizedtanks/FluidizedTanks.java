@@ -41,8 +41,6 @@ public class FluidizedTanks {
         bus.addGenericListener(BlockEntityType.class, this::registerBlockEntity);
         bus.addGenericListener(Item.class, this::registerItem);
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> registerClientOnlyEvents(bus));
-
         // MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenAddReload);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnDatapackSync);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnPlayerLoggedIn);
@@ -69,11 +67,6 @@ public class FluidizedTanks {
         event.getRegistry().register(tankItem);
     }
 
-    private void registerClientOnlyEvents(IEventBus bus){
-        bus.addListener(this::setupClient);
-        bus.addListener(this::registerBlockColour);
-        bus.addListener(this::registerItemColour);
-    }
     private void setupClient(final FMLClientSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(TANK, RenderType.cutout());
         BlockEntityRenderers.register(ENTITY_TYPE, ctx -> new TankBlockEntityRenderer());
