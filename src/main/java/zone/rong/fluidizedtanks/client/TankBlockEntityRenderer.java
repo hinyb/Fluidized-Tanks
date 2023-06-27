@@ -30,12 +30,7 @@ public class TankBlockEntityRenderer implements BlockEntityRenderer<TankBlockEnt
         if (!fluid.isEmpty()) {
             FluidAttributes attributes = fluid.getFluid().getAttributes();
             TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attributes.getStillTexture(fluid));
-            int colour;
-            if (entity.getLevel() != null) {
-                colour = attributes.getColor(entity.getLevel(), entity.getBlockPos());
-            } else {
-                colour = attributes.getColor(fluid);
-            }
+            int colour=0;
             float r = ((colour >> 16) & 0xFF) / (float) 0xFF;
             float g = ((colour >> 8) & 0xFF) / (float) 0xFF;
             float b = ((colour) & 0xFF) / 256F;
