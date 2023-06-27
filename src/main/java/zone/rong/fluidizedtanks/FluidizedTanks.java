@@ -1,5 +1,6 @@
 package zone.rong.fluidizedtanks;
 
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -39,9 +40,9 @@ public class FluidizedTanks {
         bus.addGenericListener(BlockEntityType.class, this::registerBlockEntity);
         bus.addGenericListener(Item.class, this::registerItem);
 
-        bus.addListener(this::setupClient);
-        bus.addListener(this::registerBlockColour);
-        bus.addListener(this::registerItemColour);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> bus.addListener(this::setupClient));
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> bus.addListener(this::registerBlockColour));
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> bus.addListener(this::registerItemColour));
 
         // MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenAddReload);
         MinecraftForge.EVENT_BUS.addListener(TankDefinitionManager::listenOnDatapackSync);
