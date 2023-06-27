@@ -1,0 +1,44 @@
+name: 1.18 Auto Build
+
+on:
+  watch:
+    types: [ started ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+          
+    - uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    - name: Validate Gradle wrapper
+      uses: gradle/wrapper-validation-action@v1
+      
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Gradle Build Action
+      uses: gradle/gradle-build-action@v2.4.2
+      with:
+        arguments: build
+
+    - name: Get file name
+      id: var
+      run: |
+        MESSAGE=$(ls build/libs/* | grep sources.jar -v)
+        echo file_path=$MESSAGE >> $GITHUB_OUTPUT
+
+    - name: Upload JAR file
+      uses: actions/upload-artifact@v2
+      with:
+        name: test
+        path: build/libs/*jar
