@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class TankBlock extends Block implements EntityBlock {
+public class TankBlock extends Block implements EntityBlock, BlockColor, ItemColor {
 
     public TankBlock() {
         super(Properties.of(Material.BUILDABLE_GLASS).strength(1F).sound(SoundType.STONE).noOcclusion());
